@@ -1,0 +1,27 @@
+---
+
+- name: Install required python libraries
+  pip:
+    name: "{{ python_libraries }}"
+    state: present
+  when: python_libraries is defined
+
+- name: Pull Flask app code
+  become_user: "{{ app_user }}"
+  git:
+    repo: "{{ git_repo_url }}"
+    dest: "{{ app_base_dir }}/{{ app_name }}"
+    version: "{{ git_repo_branch }}"
+
+- name: Put in place passenger_wsgi file
+  template:
+    src: "passenger_wsgi.j2"
+    dest: "{{ app_base_dir }}/{{ app_name }}/passenger_wsgi.py"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: 0644
+
+- name: Restart Apache HTTPD to reload passenger application
+  systemd:
+    name: httpd
+    state: restarted

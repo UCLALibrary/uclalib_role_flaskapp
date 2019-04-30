@@ -1,0 +1,12 @@
+<VirtualHost *:80>
+	ServerName {{ app_host_fqdn }}
+
+	ErrorLog /var/log/httpd/{{ app_name }}/error_log
+	CustomLog /var/log/httpd/{{ app_name }}/access_log combined
+
+	HostnameLookups Off
+
+	UseCanonicalName On
+
+	Redirect permanent / https://{{ app_host_fqdn }}/
+</VirtualHost>

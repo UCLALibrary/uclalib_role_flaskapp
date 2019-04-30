@@ -1,0 +1,34 @@
+---
+
+- name: Create Flask App system group
+  group:
+    name: "{{ app_user }}"
+    state: present
+
+- name: Create Flask App system user
+  user:
+    name: "{{ app_user }}"
+    group: "{{ app_user }}"
+    comment: "Flask App User Account"
+    home: "{{ app_user_home_dir }}"
+    shell: "/bin/bash"
+    createhome: yes
+    state: present
+
+- name: Create Flask App directory structure
+  file:
+    path: "{{ app_base_dir }}/{{ app_name }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+
+- name: Add ssh public keys to the Flask App user account
+  authorized_key:
+    user: "{{ app_user }}"
+    key: "{{ item }}"
+    state: present
+    exclusive: no
+  loop: "{{ ssh_pub_keys }}"
+  when: ssh_pub_keys is defined
+  tags:
+    - app-user-ssh-pub-keys

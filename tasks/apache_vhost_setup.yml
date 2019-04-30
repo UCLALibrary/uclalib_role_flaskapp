@@ -1,0 +1,33 @@
+---
+
+- name: Ensure Apache virtual host logging directory exists
+  file:
+    path: "/var/log/httpd/{{ app_name }}"
+    owner: root
+    group: root
+    mode: 0755
+    state: directory
+
+- name: Put in place logrotate configuration for this virtual host
+  lineinfile:
+    path: "/etc/logrotate.d/httpd"
+    line: "/var/log/httpd/{{ app_name }}/*log"
+    insertbefore: "BOF"
+    state: present
+
+- name: Prepare Apache HTTPD for SSL
+  include_tasks: apache_ssl_config.yml
+  when: enable_ssl == "yes"
+
+- name: Put in place the Flask App Apache virtual host configuration file
+  template:
+    src: apache_vhost.j2
+    dest: "/etc/httpd/vhosts.d/{{ app_name }}.httpd.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart Apache HTTPD
+  systemd:
+    name: httpd
+    state: restarted

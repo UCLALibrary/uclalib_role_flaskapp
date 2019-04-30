@@ -1,0 +1,10 @@
+---
+
+- name: Set-up the Flask app environment
+  import_tasks: flaskapp_env_setup.yml
+
+- name: Set-up the Apache HTTPD virtual host file
+  import_tasks: apache_vhost_setup.yml
+
+- name: Execute the Flask app deploy process
+  import_tasks: flaskapp_deploy.yml
