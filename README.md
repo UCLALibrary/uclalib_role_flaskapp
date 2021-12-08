@@ -3,6 +3,8 @@ uclalib_role_flaskapp
 
 An ansible role that installs a python Flask application on a RHEL 7 system.
 
+**This role is no longer maintaned and the repo is archived**
+
 Requirements
 ------------
 
